@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hire Charlie Carter</title>
+  <meta name="description" content="A minimal one-page site that displays a PDF file." />
+  <style>
+    :root { color-scheme: light dark; }
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    .wrap { position: fixed; inset: 0; display: grid; place-items: center; }
+    .fallback { max-width: 600px; padding: 16px; text-align: center; line-height: 1.5; }
+    iframe, embed, object { width: 100%; height: 100%; border: 0; }
+    .hidden { display: none; }
+    a.button { display: inline-block; padding: .7rem 1rem; border-radius: 10px; border: 1px solid currentColor; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <!--
+    HOW TO USE
+    1) Put your PDF next to this file and name it: document.pdf
+       (Or edit the PDF_PATH below to point to your file.)
+    2) Push to GitHub and enable GitHub Pages.
+    That's it.
+  -->
+
+  <div id="viewer" class="wrap">
+    <!-- We'll try iframe first; if it fails, we show a friendly fallback link. -->
+    <iframe id="pdfFrame" class="hidden" title="PDF viewer" allow="fullscreen"></iframe>
+    <noscript>
+      <div class="fallback">
+        <p>This site shows a PDF, but JavaScript is disabled. You can open it directly:</p>
+        <p><a class="button" href="document.pdf" target="_blank" rel="noopener">Open PDF</a></p>
+      </div>
+    </noscript>
+  </div>
+
+  <script>
+    // Change this if your file has a different name or lives in a subfolder.
+    const PDF_PATH = 'document.pdf';
+
+    const frame = document.getElementById('pdfFrame');
+
+    // Prefer iframe (most browsers provide built-in PDF viewer). Add a view hint.
+    const hashHints = '#view=FitH&pagemode=none';
+    frame.src = PDF_PATH + hashHints;
+
+    // Show the frame if it loads; otherwise, reveal a clean fallback link.
+    let loaded = false;
+    frame.addEventListener('load', () => {
+      loaded = true;
+      frame.classList.remove('hidden');
+    });
+
+    // After a short grace period, if the iframe didn't load (e.g., older iOS), show fallback.
+    setTimeout(() => {
+      if (loaded) return;
+      const wrap = document.getElementById('viewer');
+      const fallback = document.createElement('div');
+      fallback.className = 'fallback';
+      fallback.innerHTML = `
+        <p>Your browser can't preview PDFs here. You can still open or download it:</p>
+        <p><a class="button" href="${PDF_PATH}" target="_blank" rel="noopener">Open PDF</a></p>
+      `;
+      wrap.appendChild(fallback);
+    }, 600);
+  </script>
+</body>
+</html>
